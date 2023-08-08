@@ -67,3 +67,15 @@ test("Should grab the number of elements based on max shadow depth", async () =>
   assert.equal(findAllElements(el, 3).length, 8)
 })
 
+test("Should grab the number of elements based on max shadow depth", async () => {
+  const el = await fixture(`<div>
+    <shadow-root-3></shadow-root-3>
+    <shadow-root-2></shadow-root-2>
+  </div>`)
+
+  assert.equal(findAllElements(el, 1).length, 8)
+  assert.equal(findAllElements(el, 2).length, 13)
+  assert.equal(findAllElements(el, 3).length, 15)
+})
+
+
