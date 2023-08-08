@@ -1,50 +1,86 @@
 // @ts-check
 
+// function findAllNodes (container, nodes = [container]) {
+
 /**
  * @param {Element | Node} container
  * @return {Node[]}
  */
-function findAllNodes (container, nodes = [container]) {
+export function findAllNodes (container, maxDepth = Infinity) {
+  return walkAllNodes(container, maxDepth)
+}
+
+
+/**
+ * @param {ShadowRoot | Element} container
+ * @param {Number} maxDepth
+ * @return {Array<ShadowRoot | Element>}
+ */
+export function findAllElements (container, maxDepth = Infinity) {
+  return walkAllElements(container, maxDepth)
+}
+
+
+// Private
+
+/**
+  * @param {Element | Node} container
+  * @param {Number} shadowRootDepth
+  * @param {Number} maxDepth
+  * @return {Node[]}
+  */
+function walkAllNodes (container, maxDepth, shadowRootDepth = 0) {
+  /**
+   * @type {Node[]}
+   */
+  let nodes = []
+
+  nodes.push(container)
+
   const childNodes = Array.from(container.childNodes)
 
-  childNodes.forEach((node) => nodes.push(node))
-
   if ("shadowRoot" in container && container.shadowRoot) {
-    nodes.push(container.shadowRoot)
-    findAllNodes(container.shadowRoot, nodes)
+    if (shadowRootDepth < maxDepth) {
+      shadowRootDepth++
+      nodes = nodes.concat(walkAllNodes(container.shadowRoot,  maxDepth, shadowRootDepth))
+    }
   }
 
   childNodes.forEach((node) => {
-    findAllNodes(node, nodes)
+    nodes = nodes.concat(walkAllNodes(node, maxDepth, shadowRootDepth))
   })
+
 
   return nodes
 }
 
 /**
- * @param {ShadowRoot | Element} container
- * @param {Array<ShadowRoot | Element>} nodes
- * @return {Array<ShadowRoot | Element>}
- */
-function findAllElements (container, nodes = []) {
+  * @param {Element | ShadowRoot} container
+  * @param {Number} shadowRootDepth
+  * @param {Number} maxDepth
+  * @return {Array<Element | ShadowRoot>}
+  */
+function walkAllElements (container, maxDepth, shadowRootDepth = 0) {
+  /**
+   * @type {Array<Element | ShadowRoot>}
+   */
+  let nodes = []
+
   nodes.push(container)
 
-  const childElements = Array.from(container.children)
-
-  childElements.forEach((node) => nodes.push(node))
+  const children = Array.from(container.children)
 
   if ("shadowRoot" in container && container.shadowRoot) {
-    findAllElements(container.shadowRoot, nodes)
+    if (shadowRootDepth < maxDepth) {
+      shadowRootDepth++
+      nodes = nodes.concat(walkAllElements(container.shadowRoot,  maxDepth, shadowRootDepth))
+    }
   }
 
-  childElements.forEach((node) => {
-    findAllElements(node, nodes)
+  children.forEach((node) => {
+    nodes = nodes.concat(walkAllElements(node, maxDepth, shadowRootDepth))
   })
 
-  return nodes
-}
 
-export {
-  findAllNodes,
-  findAllElements,
+  return nodes
 }
