@@ -1,0 +1,41 @@
+{
+  "name": "shadow-dom-walk",
+  "version": "1.0.0",
+  "main": "./exports/index.js",
+  "module": "./exports/index.js",
+  "types": "./exports/index.d.ts",
+  "exports": {
+    ".": "./exports/index.js",
+    "./package.json": "./package.json",
+    "./exports/*": "./exports/*/*.js",
+    "./types/*": "./types/*/*.d.ts"
+  },
+  "files": [
+    "src",
+    "types",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rm -rf ./exports/**/*.d.ts && tsc",
+    "deploy:patch": "npm run build && npm version patch && npm publish && git push --follow-tags",
+    "deploy:minor": "npm run build && npm version minor && npm publish && git push --follow-tags",
+    "deploy:major": "npm run build && npm version major && npm publish && git push --follow-tags",
+    "test": "web-test-runner"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "repository": "git@github.com:KonnorRogers/shadow-dom-walk.git",
+  "bugs": {
+    "url": "https://github.com/KonnorRogers/shadow-dom-walk/issues"
+  },
+  "homepage": "https://github.com/KonnorRogers/shadow-dom-walk",
+  "author": "KonnorRogers <konnor5456@gmail.com>",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}
