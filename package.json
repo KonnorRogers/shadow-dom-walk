@@ -1,6 +1,6 @@
 {
   "name": "shadow-dom-walk",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "./exports/index.js",
   "module": "./exports/index.js",
   "types": "./exports/index.d.ts",
