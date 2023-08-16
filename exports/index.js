@@ -31,13 +31,17 @@ export function findAllElements (container, maxDepth = Infinity) {
  * @param {number} maxDepth
  * @param {"children" | "childNodes"} propertyKey
  * @param {number} shadowRootDepth
- * @returns {T}
+ * @return {T}
  */
 function walk (container, maxDepth, propertyKey, shadowRootDepth = 0) {
+  /**
+   * @type {Array<Node>}
+   */
   let nodes = []
 
   nodes.push(container)
 
+  // @ts-expect-error
   const children = Array.from(container[propertyKey])
 
   if ("shadowRoot" in container && container.shadowRoot) {

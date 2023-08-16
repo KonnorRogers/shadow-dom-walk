@@ -1,7 +1,6 @@
 {
   "include": [
-    "exports/**/*.js",
-    "exports/**/*.d.ts"
+    "exports/**/*.js"
   ],
   "compilerOptions": {
     "strict": true,
