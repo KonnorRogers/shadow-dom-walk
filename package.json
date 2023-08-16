@@ -11,9 +11,8 @@
     "./types/*": "./types/*/*.d.ts"
   },
   "files": [
-    "src",
+    "exports",
     "types",
-    "dist",
     "README.md",
     "LICENSE"
   ],
