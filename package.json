@@ -1,6 +1,6 @@
 {
   "name": "shadow-dom-walk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "./exports/index.js",
   "module": "./exports/index.js",
   "types": "./exports/index.d.ts",
@@ -10,6 +10,7 @@
     "./exports/*": "./exports/*/*.js",
     "./types/*": "./types/*/*.d.ts"
   },
+  "type": "module",
   "files": [
     "exports",
     "types",
@@ -23,7 +24,9 @@
     "deploy:major": "npm run build && npm version major && npm publish && git push --follow-tags",
     "test": "web-test-runner"
   },
-  "keywords": [],
+  "keywords": [
+    "shadow-dom"
+  ],
   "license": "MIT",
   "repository": "git@github.com:KonnorRogers/shadow-dom-walk.git",
   "bugs": {
@@ -35,6 +38,9 @@
     "access": "public"
   },
   "devDependencies": {
+    "@esm-bundle/chai": "^4.3.4-fix.0",
+    "@open-wc/testing-helpers": "^2.3.0",
+    "@web/test-runner": "^0.17.0",
     "typescript": "^5.1.6"
   }
 }
