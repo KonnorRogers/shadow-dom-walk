@@ -2,7 +2,7 @@
 
 /**
  * @typedef {Element | DocumentFragment | ShadowRoot | Node} NodesContainer
- * @typedef {DocumentFragment | ShadowRoot | Element} ElementsContainer
+ * @typedef {Document | DocumentFragment | ShadowRoot | Element} ElementsContainer
  */
 
 /**
