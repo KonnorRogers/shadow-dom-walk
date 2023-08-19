@@ -26,7 +26,7 @@ export function findAllNodes (container, { maxDepth, flat } = { maxDepth: Infini
   /**
    * @type {Array<Node | Array<Node>>}
    */
-  const elements = [...walk(container, { maxDepth, propertyKey: "children" })]
+  const elements = [...walk(container, { maxDepth, propertyKey: "childNodes" })]
 
   if (flat) {
     /**
@@ -51,7 +51,6 @@ export function findAllElements (container, { maxDepth, flat } = { maxDepth: Inf
   const elements = [...walk(container, { maxDepth, propertyKey: "children" })]
 
   if (flat) {
-    console.log(elements.flat(Infinity))
     /**
      * @type {Array<ElementsContainer>}
      */
@@ -70,14 +69,57 @@ export function findAllElements (container, { maxDepth, flat } = { maxDepth: Inf
  * @param {WalkOptions} options
  * @return {Generator<T>}
  */
-function* walk (container, options) {
+// function* walk (container, options) {
+//   let { maxDepth, currentDepth, propertyKey } = options
+//
+//   if (maxDepth == null) maxDepth = Infinity
+//   if (currentDepth == null) currentDepth = 0
+//
+//   /**
+//    * @type {T}
+//    */
+//   // @ts-expect-error
+//   yield [container]
+//
+//   /**
+//    * @type {T}
+//    */
+//   // @ts-expect-error
+//   const children = Array.from(container[propertyKey])
+//
+//   if ("shadowRoot" in container && container.shadowRoot) {
+//     if (currentDepth < maxDepth) {
+//       currentDepth++
+//
+//       yield* walk(container.shadowRoot, { maxDepth, propertyKey, currentDepth })
+//     }
+//   }
+//
+//   // @ts-expect-error
+//   for (const node of children) {
+//     yield* walk(node, { maxDepth, propertyKey, currentDepth })
+//   }
+// }
+
+/**
+ * @template [T=Array<Node>]
+ * @param {ElementsContainer | NodesContainer} container
+ * @param {WalkOptions} options
+ * @return {T}
+ */
+function walk (container, options) {
   let { maxDepth, currentDepth, propertyKey } = options
 
   if (maxDepth == null) maxDepth = Infinity
   if (currentDepth == null) currentDepth = 0
 
   /**
-   * @type {Array<Node | Element>}
+   * @type {Array<ElementsContainer | NodesContainer>}
+   */
+  let nodes = [container]
+
+  /**
+   * @type {T}
    */
   // @ts-expect-error
   const children = Array.from(container[propertyKey])
@@ -86,11 +128,14 @@ function* walk (container, options) {
     if (currentDepth < maxDepth) {
       currentDepth++
 
-      yield* walk(container.shadowRoot, { maxDepth, propertyKey, currentDepth })
+      nodes.push(walk(container.shadowRoot, { maxDepth, propertyKey, currentDepth }))
     }
   }
 
+  // @ts-expect-error
   for (const node of children) {
-    yield* walk(node, { maxDepth, propertyKey, currentDepth })
+    nodes.push(walk(node, { maxDepth, propertyKey, currentDepth }))
   }
+
+  return /** @type {T} */ (nodes)
 }

@@ -7,9 +7,10 @@ customElements.define("custom-element", CustomElement)
 customElements.define("shadow-root-2", ShadowRoot2)
 customElements.define("shadow-root-3", ShadowRoot3)
 
-test("Should grab all nodes", async () => {
+test.only("Should grab all nodes", async () => {
   const el = await fixture("<custom-element></custom-element>")
 
+  console.log(findAllNodes(el, { flat: false }))
   assert(findAllNodes(el).length < findAllNodes(document).length)
   assert.equal(findAllNodes(el).length, 4)
 })
