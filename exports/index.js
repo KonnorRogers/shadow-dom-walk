@@ -6,20 +6,59 @@
  */
 
 /**
- * @param {NodesContainer} container
- * @return {Node[]}
+ * @typedef {object} Options
+ * @property {number} [maxDepth=Infinity]
+ * @property {boolean} [flat=true]
  */
-export function findAllNodes (container, maxDepth = Infinity) {
-  return walk(container, maxDepth, "childNodes")
+
+/**
+ * @typedef {object} WalkOptions
+ * @property {number} [maxDepth=Infinity]
+ * @property {number} [currentDepth=0]
+ * @property {"children" | "childNodes"} propertyKey
+
+/**
+ * @param {NodesContainer} container
+ * @param {Options} options
+ * @return {Array<Node> | Array<Node | Array<Node>>}
+ */
+export function findAllNodes (container, { maxDepth, flat } = { maxDepth: Infinity, flat: true }) {
+  /**
+   * @type {Array<Node | Array<Node>>}
+   */
+  const elements = [...walk(container, { maxDepth, propertyKey: "children" })]
+
+  if (flat) {
+    /**
+     * @type {Array<Node>}
+     */
+    return elements.flat(Infinity)
+  }
+
+  return elements
 }
 
 /**
  * @param {ElementsContainer} container
- * @param {Number} maxDepth
- * @return {Array<ElementsContainer>}
+ * @param {Options} options
+ * @return {Array<ElementsContainer> | Array<ElementsContainer | Array<ElementsContainer>>}
  */
-export function findAllElements (container, maxDepth = Infinity) {
-  return walk(container, maxDepth, "children")
+export function findAllElements (container, { maxDepth, flat } = { maxDepth: Infinity, flat: true }) {
+  /**
+   * @type {Array<ElementsContainer | Array<ElementsContainer>>}
+   */
+  // @ts-expect-error
+  const elements = [...walk(container, { maxDepth, propertyKey: "children" })]
+
+  if (flat) {
+    console.log(elements.flat(Infinity))
+    /**
+     * @type {Array<ElementsContainer>}
+     */
+    return elements.flat(Infinity)
+  }
+
+  return elements
 }
 
 // Private
@@ -28,34 +67,30 @@ export function findAllElements (container, maxDepth = Infinity) {
 /**
  * @template [T=Array<Node>]
  * @param {ElementsContainer | NodesContainer} container
- * @param {number} maxDepth
- * @param {"children" | "childNodes"} propertyKey
- * @param {number} shadowRootDepth
- * @return {T}
+ * @param {WalkOptions} options
+ * @return {Generator<T>}
  */
-function walk (container, maxDepth, propertyKey, shadowRootDepth = 0) {
+function* walk (container, options) {
+  let { maxDepth, currentDepth, propertyKey } = options
+
+  if (maxDepth == null) maxDepth = Infinity
+  if (currentDepth == null) currentDepth = 0
+
   /**
-   * @type {Array<Node>}
+   * @type {Array<Node | Element>}
    */
-  let nodes = []
-
-  nodes.push(container)
-
   // @ts-expect-error
   const children = Array.from(container[propertyKey])
 
   if ("shadowRoot" in container && container.shadowRoot) {
-    if (shadowRootDepth < maxDepth) {
-      shadowRootDepth++
+    if (currentDepth < maxDepth) {
+      currentDepth++
 
-      nodes = nodes.concat(walk(container.shadowRoot, maxDepth, propertyKey, shadowRootDepth))
+      yield* walk(container.shadowRoot, { maxDepth, propertyKey, currentDepth })
     }
   }
 
-  children.forEach((node) => {
-    nodes = nodes.concat(walk(node, maxDepth, propertyKey, shadowRootDepth))
-  })
-
-
-  return /** @type {T} */ (nodes)
+  for (const node of children) {
+    yield* walk(node, { maxDepth, propertyKey, currentDepth })
+  }
 }
