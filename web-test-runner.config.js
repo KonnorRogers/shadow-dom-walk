@@ -1,4 +1,4 @@
-// import { playwrightLauncher } from '@web/test-runner-playwright';
+import { playwrightLauncher } from '@web/test-runner-playwright';
 // import { esbuildPlugin } from '@web/dev-server-esbuild';
 
 /** @type {import("@web/test-runner").TestRunnerConfig} */
@@ -17,9 +17,9 @@ export default {
   plugins: [
 
   ],
-  // browsers: [
-  //   playwrightLauncher({ product: 'chromium' }),
-  //   playwrightLauncher({ product: 'firefox' }),
-  //   playwrightLauncher({ product: 'webkit' })
-  // ],
+  browsers: [
+    playwrightLauncher({ product: 'chromium' }),
+    playwrightLauncher({ product: 'firefox' }),
+    playwrightLauncher({ product: 'webkit' })
+  ],
 }
