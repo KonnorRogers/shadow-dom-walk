@@ -13,18 +13,22 @@ test("Should grab all nodes", async () => {
   assert(findAllNodes(el).length < findAllNodes(document).length)
 
   const inOrderNodes = findAllNodes(el, {flat: false})
-  console.log(inOrderNodes)
-  assert.equal(inOrderNodes.length, 1)
-  assert.instanceOf(inOrderNodes[0], HTMLDivElement)
+  assert.equal(inOrderNodes.length, 2)
+  assert.instanceOf(inOrderNodes[0], CustomElement)
 
-  assert.instanceOf(inOrderNodes[0].length, 1)
-  assert.instanceOf(inOrderNodes[0][0], ShadowRoot)
+  // Check the shadowRoot
+  assert.equal(inOrderNodes[1].length, 2)
+  assert.instanceOf(inOrderNodes[1][0], ShadowRoot)
 
-  assert.instanceOf(inOrderNodes[0][0].length, 2)
-  assert.instanceOf(inOrderNodes[0][0][0], Node)
-  assert.instanceOf(inOrderNodes[0][0][1], Node)
+  assert.equal(inOrderNodes[1][1].length, 2)
 
-  console.log(findAllNodes(el, {flat: false}))
+  assert.equal(inOrderNodes[1][1][0].length, 2)
+  assert.instanceOf(inOrderNodes[1][1][0][0], Node)
+  assert.equal(inOrderNodes[1][1][0][1].length, 0)
+
+  assert.instanceOf(inOrderNodes[1][1][1][0], HTMLSlotElement)
+  assert.equal(inOrderNodes[1][1][1][1].length, 0)
+
   assert.equal(findAllNodes(el).length, 4)
 })
 

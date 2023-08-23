@@ -31,7 +31,7 @@ export function findAllNodes (container, options = {}) {
   /**
    * @type {Array<Node | Array<Node>>}
    */
-  const elements = [container].concat([walk(container, { maxDepth, propertyKey: "children" })])
+  const elements = [container].concat(walk(container, { maxDepth, propertyKey: "childNodes" }))
 
   if (flat) {
     /**
@@ -56,7 +56,7 @@ export function findAllElements (container, options = {}) {
   /**
    * @type {Array<ElementsContainer | Array<ElementsContainer>>}
    */
-  const elements = [container].concat([walk(container, { maxDepth, propertyKey: "children" })])
+  const elements = [container].concat(walk(container, { maxDepth, propertyKey: "children" }))
 
   if (flat) {
     /**
@@ -83,7 +83,7 @@ function walk (container, options) {
   if (currentDepth == null) currentDepth = 0
 
   /**
-   * @type {Array<ElementsContainer | NodesContainer>}
+   * @type {Array<ElementsContainer | NodesContainer | Array<ElementsContainer | NodesContainer>>}
    */
   let nodes = []
 
@@ -97,15 +97,13 @@ function walk (container, options) {
     if (currentDepth < maxDepth) {
       currentDepth++
 
-      nodes.push(container.shadowRoot)
-      nodes = nodes.concat([walk(container.shadowRoot, { maxDepth, propertyKey, currentDepth })])
+      nodes.push([container.shadowRoot, walk(container.shadowRoot, { maxDepth, propertyKey, currentDepth })])
     }
   }
 
-  children.forEach((node) => {
-    // @ts-expect-error
+  for (const node of children) {
     nodes.push([node, walk(node, { maxDepth, propertyKey, currentDepth })])
-  })
+  }
 
   return /** @type {T} */ (nodes)
 }
