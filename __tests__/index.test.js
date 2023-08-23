@@ -11,6 +11,20 @@ test("Should grab all nodes", async () => {
   const el = await fixture("<custom-element></custom-element>")
 
   assert(findAllNodes(el).length < findAllNodes(document).length)
+
+  const inOrderNodes = findAllNodes(el, {flat: false})
+  console.log(inOrderNodes)
+  assert.equal(inOrderNodes.length, 1)
+  assert.instanceOf(inOrderNodes[0], HTMLDivElement)
+
+  assert.instanceOf(inOrderNodes[0].length, 1)
+  assert.instanceOf(inOrderNodes[0][0], ShadowRoot)
+
+  assert.instanceOf(inOrderNodes[0][0].length, 2)
+  assert.instanceOf(inOrderNodes[0][0][0], Node)
+  assert.instanceOf(inOrderNodes[0][0][1], Node)
+
+  console.log(findAllNodes(el, {flat: false}))
   assert.equal(findAllNodes(el).length, 4)
 })
 
@@ -73,7 +87,6 @@ test("Should grab the number of elements based on max shadow depth", async () =>
     <shadow-root-2></shadow-root-2>
   </div>`)
 
-  console.log(findAllElements(el, { flat: false }))
   assert.equal(findAllElements(el, { maxDepth: 1 }).length, 8)
   assert.equal(findAllElements(el, { maxDepth: 2 }).length, 13)
   assert.equal(findAllElements(el, { maxDepth: 3 }).length, 15)

@@ -31,7 +31,7 @@ export function findAllNodes (container, options = {}) {
   /**
    * @type {Array<Node | Array<Node>>}
    */
-  const elements = [container, walk(container, { maxDepth, propertyKey: "childNodes" })]
+  const elements = [container].concat([walk(container, { maxDepth, propertyKey: "children" })])
 
   if (flat) {
     /**
@@ -56,7 +56,7 @@ export function findAllElements (container, options = {}) {
   /**
    * @type {Array<ElementsContainer | Array<ElementsContainer>>}
    */
-  const elements = [container, walk(container, { maxDepth, propertyKey: "children" })]
+  const elements = [container].concat([walk(container, { maxDepth, propertyKey: "children" })])
 
   if (flat) {
     /**
@@ -69,34 +69,6 @@ export function findAllElements (container, options = {}) {
 }
 
 // Private
-
-/**
- * @template [T=Array<Node>]
- * @param {ElementsContainer | NodesContainer} container
- * @param {WalkOptions} options
- * @return {Generator<T>}
- */
-// function* _walk (container, options) {
-//   let { maxDepth, currentDepth, propertyKey } = options
-//
-//   if (maxDepth == null) maxDepth = Infinity
-//   if (currentDepth == null) currentDepth = 0
-//
-//   // @ts-expect-error
-//   const children = Array.from(container[propertyKey])
-//
-//   if ("shadowRoot" in container && container.shadowRoot) {
-//     if (currentDepth < maxDepth) {
-//       currentDepth++
-//
-//       children.push(container.shadowRoot)
-//     }
-//   }
-//
-//   for (const node of children) {
-//     yield* [node, [..._walk(node, { maxDepth, propertyKey, currentDepth })]]
-//   }
-// }
 
 /**
  * @template [T=Array<Node>]
@@ -125,14 +97,14 @@ function walk (container, options) {
     if (currentDepth < maxDepth) {
       currentDepth++
 
-      children.push(container.shadowRoot)
+      nodes.push(container.shadowRoot)
+      nodes = nodes.concat([walk(container.shadowRoot, { maxDepth, propertyKey, currentDepth })])
     }
   }
 
   children.forEach((node) => {
     // @ts-expect-error
-    nodes.push([node, walk(node, { maxDepth, propertyKey, currentDepth })]
-    )
+    nodes.push([node, walk(node, { maxDepth, propertyKey, currentDepth })])
   })
 
   return /** @type {T} */ (nodes)
